@@ -1,0 +1,34 @@
+pkgname=mate-text-editor
+pkgver=custom
+pkgrel=1
+pkgdesc="An powerfull text editor for MATE"
+arch=('i686' 'x86_64')
+license=('GPL')
+depends=('mate-conf' 'gtk2' 'gtksourceview2' 'libxml2' 'pygtksourceview2')
+makedepends=('pkgconfig' 'mate-doc-utils' 'intltool')
+options=('!emptydirs' '!libtool')
+conflicts=('pluma')
+url="http://matsusoft.com.ar/projects/mate/"
+groups=('mate-extras')
+install=mate-text-editor.install
+source=()
+sha256sums=()
+
+build() {
+  cd "${srcdir}/../../../"
+
+  PYTHON=/usr/bin/python2 ./autogen.sh \
+    --prefix=/usr                      \
+    --sysconfdir=/etc                  \
+    --localstatedir=/var               \
+    --libexecdir=/usr/lib/             \
+    --disable-scrollkeeper             \
+    --enable-python || return 1
+  make || return 1
+}
+
+package() {
+  cd "${srcdir}/../../../"
+
+  make DESTDIR="${pkgdir}" install || return 1
+}

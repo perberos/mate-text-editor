@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, 
+ * Foundation, Inc., 51 Franklin St, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
 
@@ -112,7 +112,7 @@ pluma_tab_label_get_property (GObject    *object,
 }
 
 static void
-close_button_clicked_cb (GtkWidget     *widget, 
+close_button_clicked_cb (GtkWidget     *widget,
 			 PlumaTabLabel *tab_label)
 {
 	g_signal_emit (tab_label, signals[CLOSE_CLICKED], 0, NULL);
@@ -230,7 +230,7 @@ static void
 pluma_tab_label_class_init (PlumaTabLabelClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-	
+
 	object_class->finalize = pluma_tab_label_finalize;
 	object_class->set_property = pluma_tab_label_set_property;
 	object_class->get_property = pluma_tab_label_get_property;
@@ -339,7 +339,7 @@ pluma_tab_label_set_close_button_sensitive (PlumaTabLabel *tab_label,
 
 	state = pluma_tab_get_state (tab_label->priv->tab);
 
-	gtk_widget_set_sensitive (tab_label->priv->close_button, 
+	gtk_widget_set_sensitive (tab_label->priv->close_button,
 				  tab_label->priv->close_button_sensitive &&
 				  (state != PLUMA_TAB_STATE_CLOSING) &&
 				  (state != PLUMA_TAB_STATE_SAVING)  &&

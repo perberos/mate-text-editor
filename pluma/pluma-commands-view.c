@@ -59,6 +59,19 @@ _pluma_cmd_view_show_toolbar (GtkAction   *action,
 }
 
 void
+_pluma_cmd_view_show_tabbar (GtkAction   *action,
+                             PlumaWindow *window)
+{
+	gboolean visible;
+
+	pluma_debug (DEBUG_COMMANDS);
+
+	visible = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+
+	pluma_notebook_set_always_show_tabs (window->priv->notebook, visible);
+}
+
+void
 _pluma_cmd_view_show_statusbar (GtkAction   *action,
 			       PlumaWindow *window)
 {

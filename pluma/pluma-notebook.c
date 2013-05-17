@@ -262,7 +262,7 @@ find_tab_num_at_pos (PlumaNotebook *notebook,
 	while ((page = gtk_notebook_get_nth_page (nb, page_num)) != NULL)
 	{
 		GtkWidget *tab;
-		gint max_x, max_y;
+		gint x_pos, y_pos;
 		gint x_root, y_root;
 
 		tab = gtk_notebook_get_tab_label (nb, page);
@@ -275,20 +275,16 @@ find_tab_num_at_pos (PlumaNotebook *notebook,
 		}
 
 		gdk_window_get_origin (GDK_WINDOW (tab->window),
-				       &x_root, &y_root);
+		                       &x_root, &y_root);
 
-		max_x = x_root + tab->allocation.x + tab->allocation.width;
-		max_y = y_root + tab->allocation.y + tab->allocation.height;
+		x_pos = x_root + tab->allocation.x;
+		y_pos = y_root + tab->allocation.y;
 
-		if (((tab_pos == GTK_POS_TOP) ||
-		     (tab_pos == GTK_POS_BOTTOM)) &&
-		    (abs_x <= max_x))
-		{
-			return page_num;
-		}
-		else if (((tab_pos == GTK_POS_LEFT) ||
-		          (tab_pos == GTK_POS_RIGHT)) &&
-		         (abs_y <= max_y))
+		/* box collision */
+		if ((x_pos <= abs_x) &&
+		    (x_pos + tab->allocation.width >= abs_x) &&
+		    (y_pos <= abs_y) &&
+		    (y_pos + tab->allocation.height >= abs_y))
 		{
 			return page_num;
 		}
@@ -607,37 +603,33 @@ button_press_cb (PlumaNotebook  *notebook,
 					   event->x_root,
 					   event->y_root);
 
+	/* consume event, so that we don't pop up the context menu when
+	 * the mouse if not over a tab label
+	 */
+	if ((tab_clicked < 0) ||
+	    (event->state & GDK_BUTTON1_MASK))
+	{
+		return TRUE;
+	}
+
 	if ((event->button == 1) &&
-	    (event->type == GDK_BUTTON_PRESS) &&
-	    (tab_clicked >= 0))
+	    (event->type == GDK_BUTTON_PRESS))
 	{
 		notebook->priv->x_start = event->x_root;
 		notebook->priv->y_start = event->y_root;
 
 		notebook->priv->motion_notify_handler_id =
 			g_signal_connect (G_OBJECT (notebook),
-					  "motion-notify-event",
-					  G_CALLBACK (motion_notify_cb),
-					  NULL);
+			                  "motion-notify-event",
+			                  G_CALLBACK (motion_notify_cb),
+			                  NULL);
 	}
-	else if ((event->type == GDK_BUTTON_PRESS) &&
-		 (event->button == 3))
+	else if ((event->button == 3) &&
+	         (event->type == GDK_BUTTON_PRESS))
 	{
-		if (tab_clicked == -1)
-		{
-			// CHECK: do we really need it?
-
-			/* consume event, so that we don't pop up the context menu when
-			 * the mouse if not over a tab label
-			 */
-			return TRUE;
-		}
-		else
-		{
-			/* Switch to the page the mouse is over, but don't consume the event */
-			gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook),
-						       tab_clicked);
-		}
+		/* Switch to the page the mouse is over, but don't consume the event */
+		gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook),
+		                               tab_clicked);
 	}
 
 	return FALSE;

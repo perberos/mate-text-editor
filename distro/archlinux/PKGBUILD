@@ -1,5 +1,5 @@
 pkgname=mate-text-editor
-pkgver=custom
+pkgver=2014.07.27
 pkgrel=1
 pkgdesc="An powerfull text editor for MATE"
 arch=('i686' 'x86_64')
@@ -17,12 +17,12 @@ sha256sums=()
 build() {
   cd "${srcdir}/../../../"
 
-  PYTHON=/usr/bin/python2 ./autogen.sh \
-    --prefix=/usr                      \
-    --sysconfdir=/etc                  \
-    --localstatedir=/var               \
-    --libexecdir=/usr/lib/             \
-    --disable-scrollkeeper             \
+  PYTHON=/usr/bin/python2 sh autogen.sh \
+    --prefix=/usr                       \
+    --sysconfdir=/etc                   \
+    --localstatedir=/var                \
+    --libexecdir=/usr/lib/              \
+    --disable-scrollkeeper              \
     --enable-python || return 1
   make || return 1
 }
